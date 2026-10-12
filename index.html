@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#284f3d" />
+<meta name="mobile-web-app-capable" content="yes" />
+<title>Игра</title>
+<link rel="icon" href="data:," />
+<style>html,body{background:#739e88;height:100%;margin:0;overflow:hidden}#boot{z-index:100;background:#739e88;position:fixed;top:0;bottom:0;left:0;right:0}</style>
+  <script type="module" crossorigin src="./assets/index-STpCXcO6.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-Dd_0HGF7.css">
+</head>
+<body>
+<div id="app"><canvas id="c"></canvas><div id="ui"></div></div>
+<div id="boot" aria-busy="true">
+  <div class="boot-world" aria-hidden="true">
+    <picture class="boot-landscape">
+      <source media="(max-aspect-ratio: 1/1)" srcset="./art/loading-v1/portrait-540.webp 540w, ./art/loading-v1/portrait-768.webp 768w, ./art/loading-v1/portrait-941.webp 941w" sizes="max(100vw, 57vh)" />
+      <img src="./art/loading-v1/landscape-1440.webp" srcset="./art/loading-v1/landscape-960.webp 960w, ./art/loading-v1/landscape-1440.webp 1440w, ./art/loading-v1/landscape-1672.webp 1672w" sizes="max(100vw, 178vh)" fetchpriority="high" alt="" width="1672" height="941" />
+    </picture>
+  </div>
+  <div class="boot-sunlight" aria-hidden="true"></div>
+  <div class="boot-hero" aria-hidden="true">
+    <img class="boot-tractor" src="./art/loading-v1/tractor-640.webp" srcset="./art/loading-v1/tractor-640.webp 640w, ./art/loading-v1/tractor-1100.webp 1100w" sizes="(max-aspect-ratio: 1/1) min(96vw, 63vh), min(51vw, 77vh)" alt="" width="1536" height="1024" />
+  </div>
+  <img class="boot-flowers" src="./art/loading-v1/flowers-700.webp" alt="" aria-hidden="true" width="1536" height="1024" />
+  <img class="boot-flowers boot-flowers-right" src="./art/loading-v1/flowers-700.webp" alt="" aria-hidden="true" width="1536" height="1024" />
+  <div class="boot-shade" aria-hidden="true"></div>
+  <div class="boot-motes" aria-hidden="true">
+    <i style="--x:18%;--y:67%;--delay:-2s;--duration:9s"></i>
+    <i style="--x:72%;--y:72%;--delay:-5s;--duration:11s"></i>
+    <i style="--x:35%;--y:50%;--delay:-7s;--duration:12s"></i>
+    <i style="--x:83%;--y:48%;--delay:-1s;--duration:10s"></i>
+    <i style="--x:57%;--y:80%;--delay:-4s;--duration:8s"></i>
+    <i style="--x:9%;--y:40%;--delay:-6s;--duration:13s"></i>
+  </div>
+  <div class="boot-status">
+    <div class="boot-caption">
+      <svg class="boot-flower-mark" aria-hidden="true" viewBox="0 0 24 24"><g fill="#fff7dd"><ellipse cx="12" cy="5" rx="3" ry="5"/><ellipse cx="12" cy="19" rx="3" ry="5"/><ellipse cx="5.94" cy="8.5" rx="3" ry="5" transform="rotate(-60 5.94 8.5)"/><ellipse cx="18.06" cy="15.5" rx="3" ry="5" transform="rotate(-60 18.06 15.5)"/><ellipse cx="5.94" cy="15.5" rx="3" ry="5" transform="rotate(60 5.94 15.5)"/><ellipse cx="18.06" cy="8.5" rx="3" ry="5" transform="rotate(60 18.06 8.5)"/></g><circle cx="12" cy="12" r="4" fill="#efb94c"/></svg>
+      <span id="boot-label">Загрузка</span>
+    </div>
+    <div class="boot-track" id="boot-progress" role="progressbar" aria-labelledby="boot-label" aria-valuemin="0" aria-valuemax="100" aria-valuenow="8"><i class="boot-fill"></i></div>
+    <div class="boot-detail"><span id="boot-sub" role="status" aria-live="polite">Пробуждаем город…</span><span id="boot-percent" aria-hidden="true">8%</span></div>
+    <a id="boot-retry" href="" hidden>Попробовать снова</a>
+  </div>
+  <noscript><div class="boot-noscript">Для игры нужен JavaScript · Please enable JavaScript</div></noscript>
+</div>
+<script>
+  (function () {
+    var q = new URLSearchParams(location.search).get('lang');
+    var ru = q === 'ru' || (q !== 'en' && /^(ru|uk|be|kk|uz|ky|tg|hy|az)/i.test(navigator.language || ''));
+    document.documentElement.lang = ru ? 'ru' : 'en';
+    document.title = ru ? 'Игра' : 'Game';
+    if (!ru) {
+      document.getElementById('boot-label').textContent = 'Loading';
+      document.getElementById('boot-sub').textContent = 'Waking up the town…';
+      document.getElementById('boot-retry').textContent = 'Try again';
+    }
+    // Keep a retry action even if the entry module fails to download.
+    window.addEventListener('error', function (event) {
+      // Vite replaces the entry tag and drops its id in production.
+      if (!(event.target instanceof HTMLScriptElement) || event.target.type !== 'module') return;
+      var boot = document.getElementById('boot');
+      if (!boot) return;
+      boot.dataset.state = 'error'; boot.setAttribute('aria-busy', 'false');
+      document.getElementById('boot-sub').textContent = ru ? 'Не удалось загрузить игру. Проверьте соединение и попробуйте снова.' : 'Could not load the game. Check your connection and try again.';
+      document.getElementById('boot-retry').hidden = false;
+    }, true);
+  })();
+</script>
+</body>
+</html>
