@@ -1,28 +1,30 @@
 <!doctype html>
 <html lang="ru">
 <head>
+  <script src="./playgama-bridge.js"></script>
+
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#284f3d" />
 <meta name="mobile-web-app-capable" content="yes" />
 <title>Игра</title>
 <link rel="icon" href="data:," />
-<style>html,body{background:#739e88;height:100%;margin:0;overflow:hidden}#boot{z-index:100;background:#739e88;position:fixed;top:0;bottom:0;left:0;right:0}</style>
-  <script type="module" crossorigin src="./assets/index-STpCXcO6.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-Dd_0HGF7.css">
+<style>html,body{background:#739e88;height:100%;margin:0;overflow:hidden}#boot{z-index:100;background:#739e88;position:fixed;top:0;bottom:0;left:0;right:0}</style>
+  <script type="module" crossorigin src="./assets/index-r4ty_sjw.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-C1M-_wv6.css">
 </head>
 <body>
 <div id="app"><canvas id="c"></canvas><div id="ui"></div></div>
 <div id="boot" aria-busy="true">
   <div class="boot-world" aria-hidden="true">
     <picture class="boot-landscape">
-      <source media="(max-aspect-ratio: 1/1)" srcset="./art/loading-v1/portrait-540.webp 540w, ./art/loading-v1/portrait-768.webp 768w, ./art/loading-v1/portrait-941.webp 941w" sizes="max(100vw, 57vh)" />
-      <img src="./art/loading-v1/landscape-1440.webp" srcset="./art/loading-v1/landscape-960.webp 960w, ./art/loading-v1/landscape-1440.webp 1440w, ./art/loading-v1/landscape-1672.webp 1672w" sizes="max(100vw, 178vh)" fetchpriority="high" alt="" width="1672" height="941" />
+      <source media="(max-aspect-ratio: 1/1)" srcset="./art/loading-v1/portrait-941.webp" />
+      <img src="./art/loading-v1/landscape-1672.webp" fetchpriority="high" alt="" width="1672" height="941" />
     </picture>
   </div>
   <div class="boot-sunlight" aria-hidden="true"></div>
   <div class="boot-hero" aria-hidden="true">
-    <img class="boot-tractor" src="./art/loading-v1/tractor-640.webp" srcset="./art/loading-v1/tractor-640.webp 640w, ./art/loading-v1/tractor-1100.webp 1100w" sizes="(max-aspect-ratio: 1/1) min(96vw, 63vh), min(51vw, 77vh)" alt="" width="1536" height="1024" />
+    <img class="boot-tractor" src="./art/loading-v1/tractor-1100.webp" alt="" width="1536" height="1024" />
   </div>
   <img class="boot-flowers" src="./art/loading-v1/flowers-700.webp" alt="" aria-hidden="true" width="1536" height="1024" />
   <img class="boot-flowers boot-flowers-right" src="./art/loading-v1/flowers-700.webp" alt="" aria-hidden="true" width="1536" height="1024" />
@@ -48,14 +50,24 @@
 </div>
 <script>
   (function () {
+    // (the same choice as core/i18n.ts: ?lang, else the browser's; the platform may change it later)
     var q = new URLSearchParams(location.search).get('lang');
-    var ru = q === 'ru' || (q !== 'en' && /^(ru|uk|be|kk|uz|ky|tg|hy|az)/i.test(navigator.language || ''));
-    document.documentElement.lang = ru ? 'ru' : 'en';
-    document.title = ru ? 'Игра' : 'Game';
+    var code = (/^(ru|en|tr|de|es)$/.test(q || '') ? q : navigator.language || 'en').toLowerCase();
+    var lang = /^(ru|uk|be|kk|uz|ky|tg|hy|az)/.test(code) ? 'ru' : /^tr/.test(code) ? 'tr' : /^de/.test(code) ? 'de' : /^es/.test(code) ? 'es' : 'en';
+    var ru = lang === 'ru';
+    var TEXT = {
+      en: ['Game', 'Loading', 'Waking up the town…', 'Try again', 'Could not load the game. Check your connection and try again.'],
+      tr: ['Oyun', 'Yükleniyor', 'Kasaba uyanıyor…', 'Tekrar dene', 'Oyun yüklenemedi. Bağlantını kontrol edip tekrar dene.'],
+      de: ['Spiel', 'Wird geladen', 'Die Stadt erwacht…', 'Nochmal versuchen', 'Das Spiel konnte nicht geladen werden. Prüfe die Verbindung und versuche es erneut.'],
+      es: ['Juego', 'Cargando', 'El pueblo despierta…', 'Reintentar', 'No se pudo cargar el juego. Revisa la conexión e inténtalo de nuevo.'],
+    };
+    var text = TEXT[lang];
+    document.documentElement.lang = lang;
+    document.title = ru ? 'Игра' : text[0];
     if (!ru) {
-      document.getElementById('boot-label').textContent = 'Loading';
-      document.getElementById('boot-sub').textContent = 'Waking up the town…';
-      document.getElementById('boot-retry').textContent = 'Try again';
+      document.getElementById('boot-label').textContent = text[1];
+      document.getElementById('boot-sub').textContent = text[2];
+      document.getElementById('boot-retry').textContent = text[3];
     }
     // Keep a retry action even if the entry module fails to download.
     window.addEventListener('error', function (event) {
@@ -64,10 +76,10 @@
       var boot = document.getElementById('boot');
       if (!boot) return;
       boot.dataset.state = 'error'; boot.setAttribute('aria-busy', 'false');
-      document.getElementById('boot-sub').textContent = ru ? 'Не удалось загрузить игру. Проверьте соединение и попробуйте снова.' : 'Could not load the game. Check your connection and try again.';
+      document.getElementById('boot-sub').textContent = ru ? 'Не удалось загрузить игру. Проверьте соединение и попробуйте снова.' : text[4];
       document.getElementById('boot-retry').hidden = false;
     }, true);
   })();
-</script>
+</script>
 </body>
 </html>
